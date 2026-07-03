@@ -8,15 +8,8 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   // Pin the workspace root (multiple lockfiles exist on this machine).
   outputFileTracingRoot: dirname(fileURLToPath(import.meta.url)),
-  // Allow embedding inside the Tauri desktop shell.
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [{ key: "Access-Control-Allow-Origin", value: "*" }],
-      },
-    ]
-  },
+  output: "export",
+  images: { unoptimized: true },
 }
 
 export default nextConfig
