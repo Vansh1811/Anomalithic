@@ -4,7 +4,7 @@
 
 ### One open-core, model-agnostic **multi-agent** runtime to rule them all.
 
-[Architecture notes](./ARCHITECTURE_NOTES.md) · [Audit](./AUDIT.md) · [Changelog](./CHANGELOG.md)
+[Architecture notes](./ARCHITECTURE_NOTES.md) · [Audit](./AUDIT.md) · [Changelog](./CHANGELOG.md) · [Contributing](./CONTRIBUTING.md)
 
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
