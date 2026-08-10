@@ -45,17 +45,22 @@ async function consumeSSE(res: Response, onEvent: (event: RuntimeEvent) => void)
   }
 }
 
+/** Reads a short diagnostic snippet from a non-ok response body, without throwing
+ * if the body has already been consumed or isn't readable. */
+async function readErrorDetail(res: Response): Promise<string> {
+  try {
+    return (await res.text()).slice(0, 200)
+  } catch {
+    return ""
+  }
+}
+
 /** GETs a JSON endpoint, throwing a descriptive error on a non-2xx response instead of
  * silently parsing whatever body came back (which may not even be valid JSON). */
 async function getJson<T>(path: string, root: string): Promise<T> {
   const res = await fetch(`${root}${path}`)
   if (!res.ok) {
-    let detail = ""
-    try {
-      detail = (await res.text()).slice(0, 200)
-    } catch {
-      // ignore, body may already be consumed or unreadable
-    }
+    const detail = await readErrorDetail(res)
     throw new Error(`GET ${path} failed: HTTP ${res.status}${detail ? ` - ${detail}` : ""}`)
   }
   return (await res.json()) as T
@@ -76,7 +81,10 @@ export function createClient(baseUrl = "http://127.0.0.1:4517") {
       body: JSON.stringify(body),
       signal,
     })
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    if (!res.ok) {
+      const detail = await readErrorDetail(res)
+      throw new Error(`POST ${path} failed: HTTP ${res.status}${detail ? ` - ${detail}` : ""}`)
+    }
     await consumeSSE(res, onEvent)
   }
   return {
