@@ -26,6 +26,9 @@ export interface CreateSessionInput {
 /** Wall-clock now, isolated so it can be stubbed in tests. */
 const now = () => Date.now()
 
+/** Matches a bare UUID (the only shape `randomUUID()` ever produces for session ids). */
+const SAFE_ID = /^[a-zA-Z0-9-]+$/
+
 /**
  * File-backed session store: one JSON file per session under `dir`. Durable and
  * resumable — sessions survive restarts, which is what the orchestrator relies on
@@ -35,6 +38,9 @@ export class SessionStore {
   constructor(private readonly dir: string) {}
 
   private path(id: string): string {
+    if (!SAFE_ID.test(id)) {
+      throw new Error(`Invalid session id: ${id}`)
+    }
     return join(this.dir, `${id}.json`)
   }
 
